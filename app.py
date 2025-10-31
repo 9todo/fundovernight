@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -8,21 +9,34 @@ st.set_page_config(layout="wide")
 
 st.title("Overnight Fund Discrimination Analysis")
 
-# Load the data
+
+# Select data source
+data_source = st.selectbox("Select Data Source", ["TREPS", "CROMS"])
+
+# Load data from corresponding URL
 @st.cache_data
-def load_data():
+def load_data(source):
+    base_url = "https://storage.googleapis.com/overnighttrash/"
+    file_map = {
+        "TREPS": "TREPS%20Analysis.csv",
+        "CROMS": "CROMS%20Analysis.csv"  # make sure this file exists at the URL
+    }
+
+    url = base_url + file_map[source]
+    df = pd.read_csv(url)
+    
     try:
-        df = pd.read_csv("https://storage.googleapis.com/overnighttrash/TREPS%20Analysis.csv")
+        df = pd.read_csv(filename)
         # Clean the data
         df["Quantity Traded"] = df["Quantity Traded"].replace({',': ''}, regex=True).astype(float)
         df["YieldatwhichTraded"] = df["YieldatwhichTraded"].astype(float)
         df['Trade Date'] = pd.to_datetime(df['Trade Date'], format='mixed', dayfirst=True)
         return df
     except FileNotFoundError:
-        st.error("The file 'TREPS Analysis.csv' was not found. Please make sure the file is in the same directory as the script.")
+        st.error(f"The file '{filename}' was not found. Please make sure the file is in the same directory as the script.")
         return None
 
-df = load_data()
+df = load_data(data_source)
 
 if df is not None:
     # Exclude ETF funds
