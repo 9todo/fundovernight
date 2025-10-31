@@ -12,7 +12,7 @@ st.title("Overnight Fund Discrimination Analysis")
 @st.cache_data
 def load_data():
     try:
-        df = pd.read_csv("TREPS Analysis.csv")
+        df = pd.read_csv("https://storage.googleapis.com/overnighttrash/TREPS%20Analysis.csv")
         # Clean the data
         df["Quantity Traded"] = df["Quantity Traded"].replace({',': ''}, regex=True).astype(float)
         df["YieldatwhichTraded"] = df["YieldatwhichTraded"].astype(float)
