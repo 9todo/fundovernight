@@ -22,18 +22,18 @@ def load_data(source):
         "CROMS": "CROMS%20Analysis.csv"  # make sure this file exists at the URL
     }
 
-    url = base_url + file_map[source]
-    df = pd.read_csv(url)
+    filename_in_bucket = file_map[source]
+    url = base_url + filename_in_bucket
     
     try:
-        df = pd.read_csv(filename)
+        df = pd.read_csv(url)
         # Clean the data
         df["Quantity Traded"] = df["Quantity Traded"].replace({',': ''}, regex=True).astype(float)
         df["YieldatwhichTraded"] = df["YieldatwhichTraded"].astype(float)
         df['Trade Date'] = pd.to_datetime(df['Trade Date'], format='mixed', dayfirst=True)
         return df
-    except FileNotFoundError:
-        st.error(f"The file '{filename}' was not found. Please make sure the file is in the same directory as the script.")
+    except Exception as e:
+        st.error(f"Could not load data from '{url}'. Please check the URL and ensure the file exists. Error: {e}")
         return None
 
 df = load_data(data_source)
