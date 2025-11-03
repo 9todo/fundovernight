@@ -33,15 +33,21 @@ def load_data(source):
         st.error(f"Could not load data from '{url}'. Please check the URL and ensure the file exists. Error: {e}")
         return None
 
+# Initialize session state
+if 'df' not in st.session_state:
+    st.session_state.df = None
+
 with st.form("data_selection_form"):
     data_source = st.selectbox("Select Data Source", ["TREPS", "CROMS"])
     submitted = st.form_submit_button("Submit")
 
 if submitted:
     with st.spinner("Loading and analyzing data... Please wait."):
-        df = load_data(data_source)
+        st.session_state.df = load_data(data_source)
 
-        if df is not None:
+if st.session_state.df is not None:
+    df = st.session_state.df
+    with st.spinner("Applying filters and updating view..."):
             # Exclude ETF funds
             df = df[~df['Scheme Name'].str.contains('ETF', case=False, na=False)]
 
