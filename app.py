@@ -23,7 +23,7 @@ def load_data(source):
     }
 
     filename_in_bucket = file_map[source]
-    url = base_url + filename_in_bucket
+    url = base_url + spinner _in_bucket
     
     try:
         df = pd.read_csv(url)
